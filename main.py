@@ -4,17 +4,21 @@ import time
 import os
 import random
 
-WIN_WIDTH = 600
+WIN_WIDTH = 500
 WIN_HEIGHT = 800
 
 BIRD_IMGS = [
-    pygame.transform.scale2x(pygame.image(os.path.join("assets", "bird1.png"))),
-    pygame.transform.scale2x(pygame.image(os.path.join("assets", "bird2.png"))),
-    pygame.transform.scale2x(pygame.image(os.path.join("assets", "bird3.png"))),
+    pygame.transform.scale2x(pygame.image.load(os.path.join("assets", "bird1.png"))),
+    pygame.transform.scale2x(pygame.image.load(os.path.join("assets", "bird2.png"))),
+    pygame.transform.scale2x(pygame.image.load(os.path.join("assets", "bird3.png"))),
 ]
-PIPE_IMG = pygame.transform.scale2x(pygame.image(os.path.join("assets", "pipe.png")))
-BASE_IMG = pygame.transform.scale2x(pygame.image(os.path.join("assets", "base.png")))
-BG_IMG = pygame.transform.scale2x(pygame.image(os.path.join("assets", "bg.png")))
+PIPE_IMG = pygame.transform.scale2x(
+    pygame.image.load(os.path.join("assets", "pipe.png"))
+)
+BASE_IMG = pygame.transform.scale2x(
+    pygame.image.load(os.path.join("assets", "base.png"))
+)
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("assets", "bg.png")))
 
 
 class Bird:
@@ -79,6 +83,35 @@ class Bird:
 
         rotated_image = pygame.transform.rotate(self.img, self.tilt)
         new_rect = rotated_image.get_rect(
-            center=self.img.get_rect(topLeft=(self.x, self.y)).center
+            center=self.img.get_rect(topleft=(self.x, self.y)).center
         )
         win.blit(rotated_image, new_rect.topleft)
+
+    def get_mask(self):
+        return pygame.mask.from_surface(self.img)
+
+
+def draw_window(win, bird):
+    win.blit(BG_IMG, (0, 0))
+    bird.draw(win)
+    pygame.display.update()
+
+
+def main():
+    bird = Bird(200, 200)
+    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    clock = pygame.time.Clock()
+
+    run = True
+    while run:
+        clock.tick(30)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        bird.move()
+        draw_window(win, bird)
+    pygame.quit()
+    quit()
+
+
+main()
